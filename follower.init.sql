@@ -1,0 +1,4 @@
+
+CHANGE MASTER TO MASTER_HOST='leader.io', MASTER_USER='repl', MASTER_PASSWORD='repl';
+start slave;
+
