@@ -4,7 +4,7 @@ services:
     container_name: leader
     image: mysql:5.7.35
     environment:
-      MYSQL_USER: leader
+      MYSQL_USER: user
       MYSQL_PASSWORD: '0000'
       MYSQL_ROOT_PASSWORD: '0000'
       MYSQL_DATABASE: 'demo'
@@ -15,12 +15,18 @@ services:
       - type: bind
         source: ./leader.init.sql
         target: /docker-entrypoint-initdb.d/init.sql
+      - type: bind
+        source: ./demo_account.sql.gz
+        target: /docker-entrypoint-initdb.d/init-demo-account.sql.gz
+      - type: bind
+        source: ./leader-db
+        target: /var/lib/mysql
     networks:
       mysql-cluster:
         aliases:
           - leader.io
     ports:
-      - "3307:3306"
+      - "3306:3306"
     expose:
       - 3306
 
@@ -28,7 +34,7 @@ services:
     container_name: follower
     image: mysql:5.7.35
     environment:
-      MYSQL_USER: follower
+      MYSQL_USER: user
       MYSQL_PASSWORD: '0000'
       MYSQL_ROOT_PASSWORD: '0000'
       MYSQL_DATABASE: 'demo'
@@ -39,14 +45,30 @@ services:
       - type: bind
         source: ./follower.init.sql
         target: /docker-entrypoint-initdb.d/init.sql
+      - type: bind
+        source: ./follower-db
+        target: /var/lib/mysql
     networks:
       mysql-cluster:
         aliases:
           - follower.io
     ports:
-      - "3308:3306"
+      - "3307:3306"
     expose:
-      - 3306
+      - 3307
+
+  gh-ost:
+    container_name: gh-ost
+    image: gh-ost
+    command: sleep 1000000
+    networks:
+      mysql-cluster:
+        aliases:
+          - gh-ost
+    volumes:
+      - type: bind
+        source: ./ghost.sh
+        target: /tmp/gh-ost-release/run.sh
 
 networks:
   mysql-cluster:
