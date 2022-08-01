@@ -57,19 +57,6 @@ services:
     expose:
       - 3307
 
-  gh-ost:
-    container_name: gh-ost
-    image: gh-ost
-    command: sleep 1000000
-    networks:
-      mysql-cluster:
-        aliases:
-          - gh-ost
-    volumes:
-      - type: bind
-        source: ./ghost.sh
-        target: /tmp/gh-ost-release/run.sh
-
 networks:
   mysql-cluster:
     name: mysql-cluster
