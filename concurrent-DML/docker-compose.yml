@@ -1,0 +1,21 @@
+version: '3.7'
+services:
+  main:
+    container_name: main
+    image: mysql:5.7.35
+    environment:
+      MYSQL_USER: user
+      MYSQL_PASSWORD: '0000'
+      MYSQL_ROOT_PASSWORD: '0000'
+      MYSQL_DATABASE: 'demo'
+    volumes:
+      - type: bind
+        source: ./init.sql
+        target: /docker-entrypoint-initdb.d/init.sql
+      - type: bind
+        source: ./db
+        target: /var/lib/mysql
+    ports:
+      - "3306:3306"
+    expose:
+      - 3306
